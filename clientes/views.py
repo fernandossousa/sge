@@ -8,7 +8,7 @@ from .forms import ClienteForm
 @login_required(login_url='login')
 def listar_clientes(request):
     clientes = Cliente.objects.filter(ativo=True)
-    return render(request, 'clientes/listar.html', {'clientes': clientes})
+    return render(request, 'clientes/listar_clientes.html', {'clientes': clientes})
 
 @login_required(login_url='login')
 def criar_cliente(request):

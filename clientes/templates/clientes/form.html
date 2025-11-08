@@ -1,0 +1,210 @@
+
+
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ titulo }} - SGE{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4">
+    <h1 class="mt-4">{{ titulo }}</h1>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item"><a href="/">Dashboard</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'listar_clientes' %}">Clientes</a></li>
+        <li class="breadcrumb-item active">{{ titulo }}</li>
+    </ol>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    <i class="fas fa-user me-1"></i>
+                    {{ titulo }}
+                </div>
+                <div class="card-body">
+                    <form method="post" novalidate>
+                        {% csrf_token %}
+
+                        <div class="row">
+                            <div class="col-md-12 mb-3">
+                                <label for="{{ form.nome.id_for_label }}" class="form-label">
+                                    Nome Completo <span class="text-danger">*</span>
+                                </label>
+                                {{ form.nome }}
+                                {% if form.nome.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.nome.errors.0 }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.email.id_for_label }}" class="form-label">
+                                    Email <span class="text-danger">*</span>
+                                </label>
+                                {{ form.email }}
+                                {% if form.email.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.email.errors.0 }}
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.telefone.id_for_label }}" class="form-label">
+                                    Telefone
+                                </label>
+                                {{ form.telefone }}
+                                {% if form.telefone.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.telefone.errors.0 }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-12 mb-3">
+                                <label for="{{ form.cpf_cnpj.id_for_label }}" class="form-label">
+                                    CPF/CNPJ <span class="text-danger">*</span>
+                                </label>
+                                {{ form.cpf_cnpj }}
+                                {% if form.cpf_cnpj.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.cpf_cnpj.errors.0 }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-12 mb-3">
+                                <label for="{{ form.endereco.id_for_label }}" class="form-label">
+                                    Endereço
+                                </label>
+                                {{ form.endereco }}
+                                {% if form.endereco.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.endereco.errors.0 }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-5 mb-3">
+                                <label for="{{ form.cidade.id_for_label }}" class="form-label">
+                                    Cidade
+                                </label>
+                                {{ form.cidade }}
+                                {% if form.cidade.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.cidade.errors.0 }}
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <div class="col-md-3 mb-3">
+                                <label for="{{ form.estado.id_for_label }}" class="form-label">
+                                    Estado
+                                </label>
+                                {{ form.estado }}
+                                {% if form.estado.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.estado.errors.0 }}
+                                    </div>
+                                {% endif %}
+                                <small class="form-text text-muted">Ex: SP, RJ</small>
+                            </div>
+
+                            <div class="col-md-4 mb-3">
+                                <label for="{{ form.cep.id_for_label }}" class="form-label">
+                                    CEP
+                                </label>
+                                {{ form.cep }}
+                                {% if form.cep.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.cep.errors.0 }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <hr class="my-4">
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a href="{% url 'listar_clientes' %}" class="btn btn-secondary">
+                                <i class="fas fa-times"></i> Cancelar
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> Salvar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Máscara para telefone
+    document.addEventListener('DOMContentLoaded', function() {
+        const telefoneInput = document.getElementById('{{ form.telefone.id_for_label }}');
+        if (telefoneInput) {
+            telefoneInput.addEventListener('input', function(e) {
+                let value = e.target.value.replace(/\D/g, '');
+                if (value.length <= 10) {
+                    value = value.replace(/(\d{2})(\d{4})(\d{4})/, '($1) $2-$3');
+                } else {
+                    value = value.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
+                }
+                e.target.value = value;
+            });
+        }
+
+        // Máscara para CPF/CNPJ
+        const cpfCnpjInput = document.getElementById('{{ form.cpf_cnpj.id_for_label }}');
+        if (cpfCnpjInput) {
+            cpfCnpjInput.addEventListener('input', function(e) {
+                let value = e.target.value.replace(/\D/g, '');
+                if (value.length <= 11) {
+                    value = value.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
+                } else {
+                    value = value.replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/, '$1.$2.$3/$4-$5');
+                }
+                e.target.value = value;
+            });
+        }
+
+        // Máscara para CEP
+        const cepInput = document.getElementById('{{ form.cep.id_for_label }}');
+        if (cepInput) {
+            cepInput.addEventListener('input', function(e) {
+                let value = e.target.value.replace(/\D/g, '');
+                value = value.replace(/(\d{5})(\d{3})/, '$1-$2');
+                e.target.value = value;
+            });
+        }
+
+        // Converter estado para maiúsculas
+        const estadoInput = document.getElementById('{{ form.estado.id_for_label }}');
+        if (estadoInput) {
+            estadoInput.addEventListener('input', function(e) {
+                e.target.value = e.target.value.toUpperCase();
+            });
+        }
+    });
+</script>
+{% endblock %

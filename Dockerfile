@@ -5,7 +5,7 @@ WORKDIR /sge
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
-RUN apt update && apt -y install cron && apt -y install nano
+RUN apt update && apt -y install cron && apt -y install vim
 
 COPY . .
 

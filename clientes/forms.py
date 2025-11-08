@@ -1,4 +1,3 @@
-# ==================== forms.py ====================
 from django import forms
 from .models import Cliente
 
@@ -43,6 +42,7 @@ class ClienteForm(forms.ModelForm):
         }
     
     def clean_cpf_cnpj(self):
+        """Valida e limpa o CPF/CNPJ"""
         cpf_cnpj = self.cleaned_data.get('cpf_cnpj')
         # Remove caracteres especiais
         cpf_cnpj_limpo = ''.join(filter(str.isdigit, cpf_cnpj))
@@ -54,7 +54,21 @@ class ClienteForm(forms.ModelForm):
         return cpf_cnpj
     
     def clean_estado(self):
+        """Converte estado para maiúsculas"""
         estado = self.cleaned_data.get('estado')
         if estado:
             return estado.upper()
         return estado
+    
+    def clean_email(self):
+        """Valida email único, exceto para o próprio registro em edição"""
+        email = self.cleaned_data.get('email')
+        # Se está editando, exclui o próprio registro da verificação
+        if self.instance and self.instance.pk:
+            if Cliente.objects.filter(email=email).exclude(pk=self.instance.pk).exists():
+                raise forms.ValidationError('Este email já está cadastrado.')
+        else:
+            # Se está criando novo registro
+            if Cliente.objects.filter(email=email).exists():
+                raise forms.ValidationError('Este email já está cadastrado.')
+        return email
