@@ -1,0 +1,26 @@
+<h2 class="mt-4">Histórico de Vendas</h2>
+
+{% if vendas %}
+<table class="table table-striped mt-3">
+  <thead>
+    <tr>
+      <th>Data</th>
+      <th>Produto</th>
+      <th>Quantidade</th>
+      <th>Valor</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for v in vendas %}
+    <tr>
+      <td>{{ v.created_at|date:"d/m/Y H:i" }}</td>
+      <td>{{ v.product }}</td>
+      <td>{{ v.quantity }}</td>
+      <td>R$ {{ v.value }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<p class="text-muted">Nenhuma venda registrada.</p>
+{% endif %}

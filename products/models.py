@@ -7,8 +7,19 @@ class Product(models.Model):
     title = models.CharField(max_length=200, verbose_name='Título')
     # description = models.CharField(blank=True, verbose_name='Título')
     # serie_number = models.CharField(max_length=200, unique=True, verbose_name='Número de Série')
-    description = models.TextField(null=True, blank=True)
-    serie_number = models.CharField(max_length=200, null=True, blank=True)    
+    # description = models.TextField(null=True, blank=True)
+    # serie_number = models.CharField(max_length=200, null=True, blank=True)
+    # name = models.CharField('Nome', max_length=100)
+    # name = models.CharField(max_length=50)
+    name = models.TextField('Nome', blank=False, null=True)
+    description = models.TextField('Descrição', blank=True, null=True)
+    cost_price = models.DecimalField('Preço de custo', max_digits=10, decimal_places=2)
+    selling_price = models.DecimalField('Preço de venda', max_digits=10, decimal_places=2)
+    stock = models.PositiveIntegerField('Estoque', default=0)
+    serie_number = models.CharField(max_length=200, unique=True, default=0, verbose_name='Número de Série')
+
+    def __str__(self):
+        return self.name
     
     # ForeignKeys - ajuste conforme seu projeto
     brand = models.ForeignKey(
