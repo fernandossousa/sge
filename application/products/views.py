@@ -87,10 +87,10 @@ def products_export(request):
     response = HttpResponse(content_type="text/csv")
     response["Content-Disposition"] = 'attachment; filename="produtos.csv"'
     writer = csv.writer(response)
-    writer.writerow(["Título", "Categoria", "Marca", "Descrição", "Número de Série", "Preço de Custo", "Preço de Venda"])
+    writer.writerow(["Título", "Categoria", "Marca", "Cor", "Tamanho", "Tipo", "Número de Série", "Preço de Custo", "Preço de Venda", "Quantidade", "Descrição"])
 
     for c in models.Product.objects.all():
-        writer.writerow([c.title, c.category, c.brand, c.color , c.size, c.type, c.description, c.serie_number, c.cost_price, c.selling_price])
+        writer.writerow([c.title, c.category, c.brand, c.color , c.size, c.type, c.serie_number, c.cost_price, c.selling_price, c.quantity, c.description])
 
     return response
 
