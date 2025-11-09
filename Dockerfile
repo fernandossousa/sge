@@ -8,7 +8,7 @@ ENV PYTHONUNBUFFERED 1
 RUN apt update && apt -y install cron && apt -y install vim
 
 # COPY ./application .
-COPY ./application/requirements.txt /requirements.txt
+COPY ./requirements.txt /requirements.txt
 RUN pip install --upgrade pip
 RUN pip install -r /requirements.txt
 
