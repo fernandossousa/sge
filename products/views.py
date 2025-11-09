@@ -103,3 +103,42 @@ def product_detail(request, pk):
     """Exibe detalhes completos do produto com imagem em tamanho grande"""
     product = get_object_or_404(Product, pk=pk)
     return render(request, 'products/product_detail.html', {'product': product})
+
+def product_create(request):
+    if request.method == 'POST':
+        # IMPORTANTE: request.FILES é obrigatório!
+        form = ProductForm(request.POST, request.FILES)
+        
+        if form.is_valid():
+            product = form.save()
+            messages.success(request, 'Produto cadastrado com sucesso!')
+            return redirect('product_list')
+        else:
+            # Debug: mostrar erros
+            print("Erros do formulário:", form.errors)
+    else:
+        form = ProductForm()
+    
+    return render(request, 'products/product_create.html', {'form': form})
+
+
+def product_update(request, pk):
+    product = get_object_or_404(Product, pk=pk)
+    
+    if request.method == 'POST':
+        # IMPORTANTE: request.FILES aqui também!
+        form = ProductForm(request.POST, request.FILES, instance=product)
+        
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Produto atualizado com sucesso!')
+            return redirect('product_detail', pk=product.pk)
+        else:
+            print("Erros:", form.errors)
+    else:
+        form = ProductForm(instance=product)
+    
+    return render(request, 'products/product_update.html', {
+        'form': form,
+        'product': product
+    })

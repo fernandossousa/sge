@@ -12,6 +12,7 @@ class OutflowListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
     context_object_name = 'outflows'
     paginate_by = 10
     permission_required = 'outflows.view_outflow'
+    ordering = ['-created_at'] 
 
     def get_queryset(self):
         queryset = super().get_queryset()
