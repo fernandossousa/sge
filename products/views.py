@@ -6,6 +6,14 @@ from app import metrics
 from brands.models import Brand
 from categories.models import Category
 from . import models, forms, serializers
+from django.http import HttpResponse
+import csv
+#
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib import messages
+from .models import Product
+from .forms import ProductForm
+
 
 
 class ProductListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
@@ -79,3 +87,58 @@ class ProductCreateListAPIView(generics.ListCreateAPIView):
 class ProductRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = models.Product.objects.all()
     serializer_class = serializers.ProductSerializer
+
+def products_export(request):
+    response = HttpResponse(content_type="text/csv")
+    response["Content-Disposition"] = 'attachment; filename="produtos.csv"'
+    writer = csv.writer(response)
+    writer.writerow(["Título", "Categoria", "Marca", "Cor", "Tamanho", "Tipo", "Número de Série", "Preço de Custo", "Preço de Venda", "Quantidade", "Descrição"])
+
+    for c in models.Product.objects.all():
+        writer.writerow([c.title, c.category, c.brand, c.color , c.size, c.type, c.serie_number, c.cost_price, c.selling_price, c.quantity, c.description])
+
+    return response
+
+def product_detail(request, pk):
+    """Exibe detalhes completos do produto com imagem em tamanho grande"""
+    product = get_object_or_404(Product, pk=pk)
+    return render(request, 'products/product_detail.html', {'product': product})
+
+def product_create(request):
+    if request.method == 'POST':
+        # IMPORTANTE: request.FILES é obrigatório!
+        form = ProductForm(request.POST, request.FILES)
+        
+        if form.is_valid():
+            product = form.save()
+            messages.success(request, 'Produto cadastrado com sucesso!')
+            return redirect('product_list')
+        else:
+            # Debug: mostrar erros
+            print("Erros do formulário:", form.errors)
+    else:
+        form = ProductForm()
+    
+    return render(request, 'products/product_create.html', {'form': form})
+
+
+def product_update(request, pk):
+    product = get_object_or_404(Product, pk=pk)
+    
+    if request.method == 'POST':
+        # IMPORTANTE: request.FILES aqui também!
+        form = ProductForm(request.POST, request.FILES, instance=product)
+        
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Produto atualizado com sucesso!')
+            return redirect('product_detail', pk=product.pk)
+        else:
+            print("Erros:", form.errors)
+    else:
+        form = ProductForm(instance=product)
+    
+    return render(request, 'products/product_update.html', {
+        'form': form,
+        'product': product
+    })

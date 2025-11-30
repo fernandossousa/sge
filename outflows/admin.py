@@ -1,5 +1,6 @@
 from django.contrib import admin
 from . import models
+from .models import Outflow
 
 
 class OutflowAdmin(admin.ModelAdmin):
@@ -8,3 +9,8 @@ class OutflowAdmin(admin.ModelAdmin):
 
 
 admin.site.register(models.Outflow, OutflowAdmin)
+
+class OutflowAdmin(admin.ModelAdmin):
+    list_display = ("id", "product", "quantity", "value", "costumer", "created_at")
+    list_filter = ("costumer",)
+    search_fields = ("product__name", "costumer__name")

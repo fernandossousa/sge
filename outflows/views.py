@@ -4,6 +4,8 @@ from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView, DetailView
 from app import metrics
 from . import models, forms, serializers
+from django.shortcuts import render, get_object_or_404
+from .models import Costumer
 
 
 class OutflowListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
@@ -12,6 +14,7 @@ class OutflowListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
     context_object_name = 'outflows'
     paginate_by = 10
     permission_required = 'outflows.view_outflow'
+    ordering = ['-created_at'] 
 
     def get_queryset(self):
         queryset = super().get_queryset()
@@ -51,3 +54,9 @@ class OutflowCreateListAPIView(generics.ListCreateAPIView):
 class OutflowRetrieveAPIView(generics.RetrieveAPIView):
     queryset = models.Outflow.objects.all()
     serializer_class = serializers.OutflowSerializer
+
+
+def detalhes_cliente(request, pk):
+    cliente = get_object_or_404(Costumer, pk=pk)
+    vendas = cliente.outflows.all().order_by("-created_at")
+    return render(request, "costumer/costumer_details.html", {"cliente": cliente, "vendas": vendas})

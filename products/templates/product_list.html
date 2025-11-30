@@ -28,6 +28,7 @@
       <div class="col-md-6">
         <a href="{% url 'product_create' %}" class="btn btn-success float-end">
           <i class="bi bi-plus"></i> Novo Produto
+    <a href='{% url "products_export" %}' class='btn btn-secondary'>Exportar CSV</a>           
         </a>
       </div>
     {% endif %}
@@ -64,6 +65,9 @@
           <th>ID</th>
           <th>Título</th>
           <th>Categoria</th>
+          <th>Cor</th>
+          <th>Tamanho</th>
+          <th>Tipo</th>          
           <th>Marca</th>
           <th>Preço de Custo</th>
           <th>Preço de Venda</th>
@@ -82,6 +86,9 @@
             </td>
             <td>{{ product.title }}</td>
             <td>{{ product.category }}</td>
+            <td>{{ product.color }}</td>
+            <td>{{ product.size }}</td>
+            <td>{{ product.type }}</td>            
             <td>{{ product.brand }}</td>
             <td>R$ {{ product.cost_price }}</td>
             <td>R$ {{ product.selling_price }}</td>
@@ -110,6 +117,41 @@
     </table>
   </div>
 
-  {% include 'components/_pagination.html' %}
+  <!-- {% include 'components/_pagination.html' %} -->
 
 {% endblock %}
+
+{% load static %}
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Imagem</th>
+            <th>Produto</th>
+            <th>Ações</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for product in products %}
+        <tr>
+            <td>
+                {% if product.image %}
+                    <img src="{{ product.image.url }}" 
+                         alt="{{ product.title }}"
+                         style="width: 50px; height: 50px; object-fit: cover;"
+                         class="rounded">
+                {% else %}
+                    <img src="{% static 'img/no-image.png' %}" 
+                         alt="Sem imagem"
+                         style="width: 50px; height: 50px;"
+                         class="rounded opacity-50">
+                {% endif %}
+            </td>
+            <td>{{ product.title }}</td>
+            <td>
+                <a href="{% url 'product_detail' product.pk %}" class="btn btn-sm btn-info">Ver</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
